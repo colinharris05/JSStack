@@ -1,10 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
 
-import gulp from 'gulp';
-import eslint from 'gulp-eslint';
 import babel from 'gulp-babel';
 import del from 'del';
+import eslint from 'gulp-eslint';
+import gulp from 'gulp';
+import mocha from 'gulp-mocha';
 import webpack from 'webpack-stream';
 import webpackConfig from './webpack.config.babel';
 
@@ -18,6 +19,7 @@ const paths = {
   libDir: 'lib',
   distDir: 'dist',
   clientBundle: 'dist/client-bundle.js?(.map)',
+  allLibTests: 'lib/test/**/*.js',
 };
 
 gulp.task('lint', () =>
@@ -36,7 +38,7 @@ gulp.task('clean', () => del([
   paths.clientBundle,
 ]));
 
-gulp.task('main', ['lint', 'clean'], () =>
+gulp.task('main', ['test'], () =>
   gulp.src(paths.clientEntryPoint)
     .pipe(webpack(webpackConfig))
     .pipe(gulp.dest(paths.distDir))
@@ -51,5 +53,10 @@ gulp.task('build', ['lint', 'clean'], () =>
     .pipe(babel())
     .pipe(gulp.dest(paths.libDir))
 );
+
+gulp.task('test', ['build'], () => {
+  gulp.src(paths.allLibTests)
+    .pipe(mocha());
+});
 
 gulp.task('default', ['watch', 'main']);
