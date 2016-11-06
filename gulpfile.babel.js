@@ -4,6 +4,7 @@
 import babel from 'gulp-babel';
 import del from 'del';
 import eslint from 'gulp-eslint';
+import flow from 'gulp-flowtype';
 import gulp from 'gulp';
 import mocha from 'gulp-mocha';
 import webpack from 'webpack-stream';
@@ -31,6 +32,7 @@ gulp.task('lint', () =>
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
+    .pipe(flow({ abort: true }))
 );
 
 gulp.task('clean', () => del([
